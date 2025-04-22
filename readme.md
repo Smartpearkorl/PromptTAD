@@ -7,10 +7,7 @@ We propose **PromptTAD**, a brand new architecture for both frame-level and inst
 <!-- ![Video Anomaly Detection with PromptTAD](images/demo.gif) -->
 
 
-<video width="320" height="240" controls>  
-  <source src="./images/demo.mp4" type="video/mp4">  
-  您的浏览器不支持 HTML5 视频标签。  
-</video>  
+https://github.com/Smartpearkorl/PromptTAD/raw/refs/heads/master/images/demo.mp4
 
 ## Introduction
 ![PromptTAD Architurecture](images/overview.png)
