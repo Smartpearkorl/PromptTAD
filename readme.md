@@ -6,8 +6,7 @@ We propose **PromptTAD**, a brand new architecture for both frame-level and inst
 
 <!-- ![Video Anomaly Detection with PromptTAD](images/demo.gif) -->
 
-
-<video src="/images/demo.mp4" width="320" height="240" controls></video>  
+https://private-user-images.githubusercontent.com/116262238/436016532-ace99e60-a889-4c35-ba45-10d925f68a0e.mp4
 
 ## Introduction
 ![PromptTAD Architurecture](images/overview.png)
