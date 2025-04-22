@@ -101,6 +101,7 @@ class Instance_block(nn.Module):
         if self.apply_obj2query:
             obj_emb = self.object2qurey(obj_emb, query, query )
             # img_emb = self.frame2query(img_emb, query, query )
+            
         return query , img_emb , obj_emb
 
 class Instance_Decoder(nn.Module):

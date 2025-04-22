@@ -217,7 +217,7 @@ class ProcessorUtils(PathConfig):
            target_folder: 读取图像的文件夹, 默认为None, 此时读取 self.image_folder/scene/images下的图片
            sort_keys: 读取文件夹的排序方式
     '''
-    def create_video_from_folders(self, scenes, output_folder, fps=10, target_folder=None ,sort_keys = None):   
+    def create_video_from_folders(self, scenes, output_folder, fps=5, target_folder=None ,sort_keys = None):   
         if target_folder!=None:
             folder_images = [sorted(glob.glob(os.path.join(glob.escape(folder),'*.jpg')),key=sort_keys) for folder in target_folder]
         else:
@@ -236,7 +236,7 @@ class ProcessorUtils(PathConfig):
                 if (canvas_height,canvas_width) != (frame.shape[0], frame.shape[1]):  
                     frame = cv2.resize(frame, (canvas_height,canvas_width))  
                 out.write(frame)
-                print(f'video saved at {output_folder}')
+            print(f'video saved at {output_folder}')
         out.release()
         cv2.destroyAllWindows()
 
@@ -2137,7 +2137,7 @@ class Boxes_Comparison(PathConfig):
                     ax2.fill_between(x, y1, y2, color='C1', alpha=0.3, interpolate=True)
                 # plot scores
                 for i,(name,score) in enumerate(named_scores.items()):
-                    ax2.plot(xvals[:index+1],score[:index+1], label=name, color=colores[i], linestyle=linestyle[i],linewidth=2)
+                    ax2.plot(xvals[:index+1],score[:index+1], label=name, color=colores[i], linestyle=linestyle[i],linewidth=2) # linewidth=2 if i==0 else 1.5
                 
                 image_savepath = os.path.join(save_path,yolo_labels[index+NF-1]['frame_id'])
                 # label fontsize
@@ -2402,14 +2402,20 @@ class sam_tools(PathConfig):
 '''
 if __name__ == '__main__':
     pass
+
     # pp_tools = ProcessorUtils()
-    # scenes = ['[score]a_VxrUq9PmA_002682_AUC']
+    # scenes = 'a_VxrUq9PmA_002682_AUC-58.90'
     # output_folder = "/data/qh/DoTA/output/debug/visualization/videos/others"
-    # # target_folder = ["/data/qh/DoTA/poma_v2/rnn/base,no_fpn,rnn,vcl=8,lr=0.002/Gradcam_Frame/a_VxrUq9PmA_002682_AUC-58.90"]
-    # target_folder = ['/data/qh/DoTA/output/debug/box_compare/anomaly_score/baseline VS Fullmodel[v2]/[demoL-paper]/a_VxrUq9PmA_002682']
-    # # def get_sort_key(path):  
-    # #     match = re.search(r'gradcam_(\d+)', path)    
-    # #     return int(match.group(1)) if match else 0  
+    # target_folder = ["/data/qh/DoTA/poma_v2/rnn/base,no_fpn,rnn,vcl=8,lr=0.002/Gradcam_Frame/a_VxrUq9PmA_002682_AUC-58.90"]
+    # def get_sort_key(path):  
+    #     match = re.search(r'gradcam_(\d+)', path)    
+    #     return int(match.group(1)) if match else 0  
+    # pp_tools.create_video_from_folders(scenes=scenes, output_folder=output_folder, target_folder=target_folder, sort_keys=get_sort_key)
+
+    # pp_tools = ProcessorUtils()
+    # scenes = ['[score_demo]a_VxrUq9PmA_002682']
+    # output_folder = "/data/qh/DoTA/output/debug/visualization/videos/others"
+    # target_folder = ["/data/qh/DoTA/output/debug/box_compare/anomaly_score/Promppt VS Others/[video][online]FullModel_Baseline_TTHF/a_VxrUq9PmA_002682/"]
     # pp_tools.create_video_from_folders(scenes=scenes, output_folder=output_folder, target_folder=target_folder, sort_keys=None)
     
     # # ego-involved / non-ego
@@ -2462,14 +2468,27 @@ if __name__ == '__main__':
 if __name__ == '__main__':
     pass
     pp_tools = Post_Process_Tools()
-    # pkl_path = "/data/qh/DoTA/poma_v2/instance/vst,ins,bottle,prompt,rnn,depth=4/"
-    # pkl_path = "/data/qh/DoTA/poma_v2/instance/vst,ins,bottle,prompt,rnn,depth=4/eval/results-180.pkl"
-    # model_folder =  "/data/qh/DoTA/poma_v2/instance/vst,ins,bottle,prompt,rnn,depth=4" 
-    # model_folder = "/data/qh/DoTA/poma_v2/instance/[v2]vst,ins,prompt,rnn,depth=4/"
-    # specific_peoch  = [120]
-    # model_folder = "/data/qh/DoTA/poma_v2/instance/vst,ins,prompt,rnn,depth=4/"
-    # specific_peoch  = [160]
-    # pp_tools.calculate_stauc_score(model_folder,specific_peoch,popr=True)
+    # path = [          
+    #         # baseline
+    #         "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/",
+    #         "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=256,fpn(0),prompt(0),rnn,vcl=8/",
+    #         "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(0),prompt(1),rnn,vcl=8/",
+    #         "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(1),prompt(0),rnn,vcl=8/",
+    #         "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(1),prompt(1),rnn,vcl=8/",
+
+    #         # ablation
+    #         "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(1),prompt(no_RA),rnn,vcl=8/",
+    #         "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8/",
+
+    #         # instance,
+    #         "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(0),prompt(1),rnn,vcl=8/",
+    #         "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/",
+
+    #        ]
+
+    model_folder = "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/"
+    specific_peoch  = [120]
+    pp_tools.calculate_stauc_score(model_folder,specific_peoch,popr=True)
 
 
 '''
@@ -2481,22 +2500,10 @@ if __name__ == '__main__':
     # Tools = Scene_Aware_Tools(model_folder)
     # Tools.selet_mini_box(area_threshold=5000)
 
-    # model_folder = "/data/qh/DoTA/output/Prompt/cross_attn_trans_depth_4_load_from_prompt/"
-    # epochs = [80]
 
-    # model_folder = "/data/qh/DoTA/output/Baseline/v4_2/"
-    # epochs = [690]
-
-    # model_folder = "/data/qh/DoTA/output/Prompt/standart_fpn_lr=0.002/"
-    # epochs = [200]
-
-    # model_folder = "/data/qh/DoTA/poma_v2/instance/[v2]vst,ins,prompt,rnn,depth=4/"
-    # epochs = [120]
-    # Post_Process_Tools.eval_on_epoches(model_folder, specific_peoch = None , post_process = True , specific_info = None)
-
-    # model_folder = "/data/qh/DoTA/output/Baseline/v4_2/"
-    # epochs = [690]
-    # Post_Process_Tools.eval_on_epoches(model_folder, specific_peoch = epochs , post_process = True , specific_info = None ,test_kernelsize = False)
+    # model_folder = "/ssd/qh/DoTA/data/TTHF/TDAFF_BASE_RN50/"
+    # epochs = [20]
+    # Post_Process_Tools.eval_on_epoches(model_folder, val_type='all', specific_peoch = epochs , post_process = False , specific_info = None ,test_kernelsize = False)
 
     # specific_info = {}
     # specific_info['name'] = 'minibox_10K'
@@ -2643,53 +2650,55 @@ if __name__ == "__main__":
     # scenes = list(ego_involved_scenes.keys())[100:]
     # # scenes = list(non_ego_scenes.keys())[100:]
 
-    folder = '/data/qh/DoTA/output/debug/box_compare' 
-    cmp = Boxes_Comparison(folder)
-    pkl_paths = [
-                 "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/eval/results-120.pkl",
-                 "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/eval/results-160.pkl",
-                #  "/ssd/qh/DoTA/data/TTHF/TDAFF_BASE_RN50/popr_eval.pkl",
-                 "/ssd/qh/DoTA/data/TTHF/TDAFF_BASE_RN50/eval.pkl",
-                ]
-    sub_folder_name = 'Promppt VS Others'
-    # save_name = '[video][online,dark,lowAUC]FullModel_Baseline_TTHF'
-    save_name = '[selected]FullModel_Baseline_TTHF'
-    names = ['FullModel','Baseline','TTHF'] # compare model name
-    only_popr = False
-    # save_name = '[popr]FullModel_Baseline_TTHF'
-    # names = ['FullModel†','Baseline†','TTHF†'] # compare model name
-    # only_popr = True
-    NFs = [4,4,0]
-    last_frame = True # True  False
-    high_quality = True # True  False
-    instance_cfg = {}
-    instance_cfg['pkl_path'] = "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/eval/results-120.pkl"
-    # instance_cfg = None
-
-    # select to discuss
-    # scenes = ['eWWgJznGg6U_006506','yhtzAKqRyXw_004811','pQdl0apLT70_004976','hy433gakFeo_001156','4wKjxDXnmYs_001051']
-    # scenes = ['DyzL2sahobA_002611']
-
-    # positive-selected fixed x_ticks
-    # scenes = ['a_VxrUq9PmA_002682','Pbw0A-RCjcw_002938','PqbpIHZvjMA_002926','Hd2IzHAfkCI_001091','HzVbo46kkBA_004124',
-    #           'Q7VBPeGwJWw_001631','D_pyFV4nKd4_001836',]
+    # folder = '/data/qh/DoTA/output/debug/box_compare' 
+    # cmp = Boxes_Comparison(folder)
+    # pkl_paths = [
+    #              "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/eval/results-120.pkl",
+    #              "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/eval/results-160.pkl",
+    #             #  "/ssd/qh/DoTA/data/TTHF/TDAFF_BASE_RN50/popr_eval.pkl",
+    #              "/ssd/qh/DoTA/data/TTHF/TDAFF_BASE_RN50/eval/results-20.pkl",
+    #             ]
+    # sub_folder_name = 'Promppt VS Others'
     
-    # scenes = ['D_pyFV4nKd4_001836','a_VxrUq9PmA_002682','Pbw0A-RCjcw_002938','pQdl0apLT70_004976']
-    # highlight_x_axis = [[34,48,58],[27,50,61],[15,53,113],[21,56,75]]
-    # left_ha = [21,61]
-    # right_ha = [58] 
+    # # save_name = '[video][online]FullModel_Baseline_TTHF'
+    # save_name = '[selected]FullModel_Baseline_TTHF'
+    # names = ['FullModel','Baseline','TTHF'] # compare model name
+    # # names = ['Ours','MOVAD','TTHF'] # compare model name
+    # only_popr = False
 
-    scenes = ['JHfjuFrnpjA_005930']
-    highlight_x_axis = [[39,43,48,52,57,66]]
-    left_ha = [39,48]
-    right_ha = []
+    # # save_name = '[popr]FullModel_Baseline_TTHF'
+    # # names = ['FullModel†','Baseline†','TTHF†'] # compare model name
+    # # only_popr = True
 
-    cmp.plot_anomaly_score_on_scenes(scenes = scenes, sub_folder_name = sub_folder_name, 
-                                     save_name = save_name , pkl_paths = pkl_paths , only_popr = only_popr,
-                                     NFs = NFs, names = names , highlight_x_axis = highlight_x_axis , 
-                                     left_ha=left_ha , right_ha = right_ha , last_frame=last_frame,
-                                     high_quality=high_quality, instance_cfg=instance_cfg)
+    # NFs = [4,4,0]
+    # last_frame = True # True  False
+    # high_quality = True # True  False
+    # highlight_x_axis, left_ha, right_ha = None, [], []
+    # instance_cfg = {}
+    # instance_cfg['pkl_path'] = "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/eval/results-120.pkl"
+    # scenes = ['a_VxrUq9PmA_002682']
+    # # instance_cfg = None
 
+    # # scenes = ['D_pyFV4nKd4_001836','a_VxrUq9PmA_002682','Pbw0A-RCjcw_002938','pQdl0apLT70_004976']
+    # # highlight_x_axis = [[34,48,58],[27,50,61],[15,53,113],[21,56,75]]
+    # # left_ha = [21,61]
+    # # right_ha = [58] 
+
+    # # scenes = ['JHfjuFrnpjA_005930']
+    # # highlight_x_axis = [[39,43,48,52,57,66]]
+    # # left_ha = [39,48]
+    # # right_ha = []
+
+    # scenes = ['pQdl0apLT70_004976']
+    # highlight_x_axis = [[21,24,38,56,72,76]]
+    # left_ha = [21]
+    # right_ha = []
+
+    # cmp.plot_anomaly_score_on_scenes(scenes = scenes, sub_folder_name = sub_folder_name, 
+    #                                  save_name = save_name , pkl_paths = pkl_paths , only_popr = only_popr,
+    #                                  NFs = NFs, names = names , highlight_x_axis = highlight_x_axis , 
+    #                                  left_ha=left_ha , right_ha = right_ha , last_frame=last_frame,
+    #                                  high_quality=high_quality, instance_cfg=instance_cfg)
 
 '''
 可视化instance anomaly

@@ -291,11 +291,11 @@ if __name__ == "__main__":
     cfg_paths = [  
         # './configs/train/poma/vst/base_detection/vst,base,dim=256,fpn(0),prompt(0),rnn,vcl=8.py',  
         # './configs/train/poma/vst/base_detection/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8.py',  
-        './configs/train/poma/vst/base_detection/vst,base,fpn(0),prompt(1),rnn,vcl=8.py',  
+        # './configs/train/poma/vst/base_detection/vst,base,fpn(0),prompt(1),rnn,vcl=8.py',  
         # './configs/train/poma/vst/base_detection/vst,base,fpn(1),prompt(0),rnn,vcl=8.py',  
         # './configs/train/poma/vst/base_detection/vst,base,fpn(1),prompt(1),rnn,vcl=8.py',  
         # './configs/train/poma/vst/instance_detection/vst,ins,fpn(0),prompt(1),rnn,vcl=8.py',  
-        # './configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py',  
+        './configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py',  
         # './configs/train/poma/vst/ablation/vst,base,fpn(1),prompt(no_RA),rnn,vcl=8.py',
         # './configs/train/poma/vst/ablation/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8.py',
     ]  
@@ -303,11 +303,11 @@ if __name__ == "__main__":
     weight_path = [
         # "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=256,fpn(0),prompt(0),rnn,vcl=8/checkpoints/model-200.pt",
         # "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/checkpoints/model-200.pt",
-        "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(0),prompt(1),rnn,vcl=8/checkpoints/model-200.pt",
+        # "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(0),prompt(1),rnn,vcl=8/checkpoints/model-200.pt",
         # "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(1),prompt(0),rnn,vcl=8/checkpoints/model-200.pt",
         # "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(1),prompt(1),rnn,vcl=8/checkpoints/model-200.pt",
         # "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(0),prompt(1),rnn,vcl=8/checkpoints/model-200.pt",
-        # "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/checkpoints/model-200.pt",
+        "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/checkpoints/model-200.pt",
         # "/data/qh/DoTA/poma_v2/rnn/vst,base,fpn(1),prompt(no_RA),rnn,vcl=8/checkpoints/model-200.pt",
         # "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8/checkpoints/model-200.pt",
     ]

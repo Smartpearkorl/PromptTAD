@@ -101,6 +101,8 @@ def validate(args, val_loader, model, dataset='KITTI'):
             with torch.no_grad():
                 if args.other_method == 'TDAFF_BASE':
                     if args.fg and args.general:
+                        # from calflops import calculate_flops 
+                        # flops, macs, params = calculate_flops(model = model, args=[input_img, frame_c, None,'eval'])
                         output_logits_m, output_logits_s = model(input_img, frame_c, mode='eval')
                     elif args.fg:
                         output_logits_m = model(input_img, frame_c, mode='eval')
