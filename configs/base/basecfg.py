@@ -5,10 +5,10 @@ cfg = Config()
 
 # basic
 cfg.basic.seed = 123
-cfg.basic.total_epoch = 100
-cfg.basic.snapshot_interval = 10
+cfg.basic.total_epoch = 200
+cfg.basic.snapshot_interval = 20
 
-cfg.basic.test_inteval = 10
+cfg.basic.test_inteval = 20
 cfg.basic.batch_size = 8
 cfg.basic.test_batch_size = 4
 cfg.basic.num_workers = 8

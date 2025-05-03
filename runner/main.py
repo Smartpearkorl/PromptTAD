@@ -62,6 +62,7 @@ def parse_config():
     parser.add_argument('--output',
                         default = "/data/qh/DoTA/pama/test/vscode_debug/",
                         # default = "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/",
+                        # default = "/data/qh/DoTA/poma_v2/instance/vst,ins,fpn(1),prompt(1),rnn,vcl=8/",
                         help='Directory where save the output.')
     
     args = parser.parse_args()
@@ -91,13 +92,10 @@ if __name__ == "__main__":
 
                                            ablation_study
         cfg_path = './configs/train/poma/vst/ablation/vst,base,fpn(1),prompt(no_RA),rnn,vcl=8.py'
-        cfg_path = './configs/train/poma/vst/ablation/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8.py'
-
-                                            memorey bank
-        cfg_path = './configs/train/poma/vst/memory/vst,ins,fpn(1),prompt(1),memory(2),qdepth(2),mb(10),vcl(20).py'    
+        cfg_path = './configs/train/poma/vst/ablation/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8.py'  
                      
         '''        
-        cfg_path = './configs/train/poma/vst/memory/vst,ins,fpn(1),prompt(1),memory(2),qdepth(2),mb(10),vcl(20).py'  
+        cfg_path = './configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py'
     else:
         cfg_path = parse_cfg['config']
 
@@ -121,14 +119,8 @@ if __name__ == "__main__":
     print('prepare dataset...')
     train_sampler, test_sampler, traindata_loader, testdata_loader = prepare_dataset(basecfg.basic, datacfg.train_dataset.data,datacfg.test_dataset.data)
     print('loading model...')
-    if modelcfg.model_type == 'pama':
-        model =  modelcfg.model( sam_cfg = modelcfg.sam, 
-                                 bottle_aug_cfg = modelcfg.bottle_aug, 
-                                 ins_decoder_cfg = modelcfg.ins_decoder, 
-                                 ano_decoder_cfg = modelcfg.ano_decoder,
-                                 proxy_task_cfg = modelcfg.proxy_task )
-    
-    elif modelcfg.model_type == 'poma':
+ 
+    if modelcfg.model_type == 'poma':
         model =  modelcfg.model( dinov2_cfg = modelcfg.dinov2 ,
                                  clip_cfg = modelcfg.clip,
                                  vst_cfg = modelcfg.vst,
@@ -138,14 +130,7 @@ if __name__ == "__main__":
                                  ins_decoder_cfg = modelcfg.ins_decoder, 
                                  ano_decoder_cfg = modelcfg.ano_decoder,
                                  proxy_task_cfg = modelcfg.proxy_task)
-    
-    elif  modelcfg.model_type == 'clip_poma':
-        model =  modelcfg.model( clip_cfg = modelcfg.clip ,
-                                 ins_encoder_cfg = modelcfg.ins_encoder ,
-                                 bottle_aug_cfg = modelcfg.bottle_aug , 
-                                 ins_decoder_cfg = modelcfg.ins_decoder, 
-                                 memorybank_cfg = modelcfg.memorybank )
-        
+       
     # freeze vit: misconvergence for sam
     # if datacfg.train_dataset.cfg.pre_process_type == 'rgb':
     #     freeze_vit_backbone(basecfg.basic.model_type,model)
