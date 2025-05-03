@@ -227,7 +227,7 @@ class poma(nn.Module):
         '''
         if self.use_proxy_task and 'instance' in self.proxy_tasks and self.ins_anomaly_type == 'ffn': 
             ret['ins_anomaly'] = []
-            for frame_instance_tokens in batch_object_tokens: # instance_tokens | batch_object_tokens
+            for frame_instance_tokens in batch_object_tokens: # batch_object_tokens = instance_tokens when self.instance_decoder == 'mean' 
                 ins_anomaly_output = self.ins_anomaly_regressor(frame_instance_tokens)
                 ret['ins_anomaly'].append(ins_anomaly_output)
       
@@ -251,7 +251,7 @@ class poma(nn.Module):
                 # only use the last vst emb : [B , C , 15 , 20]       
                 # img_embs = vst_img_emb[-1].flatten(2).permute(0, 2, 1) # [B, N=HxW, C]
                 # ave-pooling
-                img_embs = self.ave_pool(img_embs).flatten(2).permute(0, 2, 1) # [B , C , 60 , 80] -> [B , C , 6 , 8] -> [B , 36, C]    
+                img_embs = self.ave_pool(img_embs).flatten(2).permute(0, 2, 1) # [B , C , 60 , 80] -> [B , C , 6 , 6] -> [B , 36, C]    
 
             elif self.vit_type == 'dinov2':
                 # only use the last vst emb : [B , C , 15 , 20]       
@@ -292,7 +292,7 @@ class poma(nn.Module):
             '''
             if self.use_proxy_task and 'instance' in self.proxy_tasks and self.ins_anomaly_type == 'memory':
                 ret['ins_anomaly'] = []
-                for frame_ins_tokens, frame_img_states, frame_obj_states in zip(instance_tokens,img_hidden_states,obj_hidden_states):
+                for frame_ins_tokens, frame_img_states, frame_obj_states in zip(batch_object_tokens, img_hidden_states, obj_hidden_states):
                     frame_ins_tokens = frame_ins_tokens.unsqueeze(dim=0)
                     frame_img_states = frame_img_states.unsqueeze(dim=0)
                     frame_obj_states = frame_obj_states.unsqueeze(dim=0)

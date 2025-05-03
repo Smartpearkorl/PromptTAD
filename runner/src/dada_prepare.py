@@ -7,6 +7,13 @@ import json
 import numpy as np
 import copy
 from PIL import Image, ImageDraw, ImageFont
+# Custom imports
+import sys
+from pathlib import Path
+FILE = Path(__file__).resolve() # /home/qh/TDD/PromptTAD/runner/src/dada_prepare.py
+sys.path.insert(0, str(FILE.parents[2]))
+import os 
+os.chdir(FILE.parents[2])
 from runner import DADA_FOLDER , FONT_FOLDER
 
 '''
@@ -16,12 +23,10 @@ from runner import DADA_FOLDER , FONT_FOLDER
 3. 查看yolo和gt的point
 4. 划分 ego-involves and non-ego-involves
 '''
-
-
 class DADA_Prepare():
     def __init__(self):
         self.folder = DADA_FOLDER
-        self.videos_pth = DADA_FOLDER / "videos/*"
+        self.videos_pth = str(DADA_FOLDER / "videos/*")
         self.image_folder = os.path.join(self.folder, 'frames')
         self.yolo_folder = os.path.join(self.folder, 'yolov9')
         self.gt_folder = os.path.join(self.folder,'annotations')
@@ -476,10 +481,30 @@ class DADA_Prepare():
         with open(no_ego_path,'w') as f:
             json.dump(non_ego_involves, f, indent=4)
 
-    
-if __name__ == '__main__':
+def PrepareMetadata():
     tool = DADA_Prepare()
-    type='train'# 'train' 'val' 'test' 
+    print(f'######  DATA Prepare : Convert Video to Image ######')
+    tool.video2image()
+    for type in ['test']: #'train','val','test'
+        print(f'######  DATA Prepare : Create Metadata type={type}######')
+        tool.creat_metadata(type=type)
+        tool.split_ego_involves(data_type=type)
+def PrepareBoundingBoxes():
+    tool = DADA_Prepare()
+    for type in ['train','val','test']: #'train','val','test'
+        print(f'######  DATA Prepare : Prepare Bounding Boxes type={type}######')
+        tool.add_boxes_to_labels(data_type=type)
+        tool.check_point_box(data_type=type ,check_type='before')
+        tool.check_point_box(data_type=type ,check_type='after')
+
+
+if __name__ == '__main__':
+    pass
+    tool = DADA_Prepare()
+    print(f'######  DATA Prepare : Convert Video to Image ######')
+    tool.video2image()
+    # tool = DADA_Prepare()
+    # type='test'# 'train' 'val' 'test' 
     # tool.creat_metadata(type=type)
     # tool.add_boxes_to_labels(data_type=type)
     # tool.check_point_box(data_type=type ,check_type='after')

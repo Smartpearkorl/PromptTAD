@@ -8,14 +8,30 @@ finally run get_stauc to compute the STAUC value.
 import numpy as np
 import torch
 import copy
-
-
+import pickle
+import json
+from datetime import datetime
 from sklearn.utils.extmath import stable_cumsum
 from sklearn.utils.validation import column_or_1d, check_consistent_length, assert_all_finite
 from sklearn.utils.multiclass import type_of_target
 from sklearn import metrics
 import warnings
 from tqdm import tqdm
+import itertools
+import os
+import argparse
+
+# Custom imports
+import sys
+from pathlib import Path
+FILE = Path(__file__).resolve() # /home/qh/TDD/pama/runner/src/stauc.py
+sys.path.insert(0, str(FILE.parents[2]))
+import os 
+os.chdir(FILE.parents[2])
+from runner.src.tools import custom_print
+from runner.src.metrics import normalize_video 
+from runner import DATA_FOLDER
+
 H = 256
 W = 256
 
@@ -303,8 +319,127 @@ class STAUCMetrics():
         else:
             fps = 1 + threshold_idxs - tps
         return fps, tps, y_score[threshold_idxs], positives
+
+'''
+计算stauc指标
+'''
+def calculate_stauc_score(model_folder: str ,  specific_peoch : list = [] , popr = False): # scenes:List[str]=None
     
-if __name__ == '__main__':
+    def flat_list(list_):
+        if isinstance(list_, (np.ndarray, np.generic)):
+            # to be retrocompatible
+            return list_
+        return list(itertools.chain(*list_))
+    
+    def read_video_boxes(labels,begin,end):
+        frames_boxes = []
+        for frame_data in labels[begin:end]:
+            boxes = [ obj['bbox'] for obj in frame_data['objects'] ]
+            frames_boxes.append(np.array(boxes))
+        return frames_boxes
+
+    def post_process(outputs, kernel_size = 31):
+        import scipy.signal as signal
+        post_outputs = []
+        for preds in outputs:
+            ks = len(preds) if len(preds)%2!=0 else len(preds)-1 # make sure odd
+            now_ks = min(kernel_size,ks)
+            preds = signal.medfilt(preds, kernel_size = now_ks)     
+            scores_each_video = normalize_video(np.array(preds))
+            post_outputs.append(scores_each_video)
+        return post_outputs
+
+    file_name = os.path.join(model_folder,'evaluation',f'stauc_eval.txt')
+    for epoch in specific_peoch:
+        pkl_path = os.path.join(model_folder,'eval',f'results-{epoch}.pkl')
+        NF = 4
+        assert os.path.exists(pkl_path),f'{pkl_path} is not existed'
+        with open(pkl_path, 'rb') as f:
+            content = pickle.load(f)
+        assert 'obj_targets' in content ,f'instance anomal info is not in {pkl_path}'
+        gt_targets = flat_list(content['targets'])
+        L = len(gt_targets)  # for debug
+        # L = 5
+        if popr:
+            content['outputs'] = post_process(content['outputs'])   
+        gt_targets = gt_targets[:L]
+        gt_targets = flat_list(content['targets'][:L])
+        pred_scores = flat_list(content['outputs'][:L])
+        pred_bboxes_scores = flat_list(content['obj_outputs'][:L])
+        scenes = content['video_name'][:L]
+        gt_bboxes, pred_bboxes = [], []  
+        for scene in tqdm(scenes,desc="Scenes : "):
+            yolo_path = os.path.join(DATA_FOLDER / 'yolov9', scene+'.json')
+            gt_path = os.path.join(DATA_FOLDER / 'annotations',scene+'.json')
+            with open(yolo_path, 'r') as f:
+                yolo_data = json.load(f)
+            with open(gt_path, 'r') as f:
+                gt_data = json.load(f)
+                        
+            yolo_labels , gt_labels  =  yolo_data['lables'] , gt_data['labels']
+            num_frames = yolo_data['num_frames']
+            ori_yolo_boxes = read_video_boxes(yolo_labels,NF-1,num_frames-1)
+            ori_gt_boxes = read_video_boxes(gt_labels,NF-1,num_frames-1)
+            gt_bboxes.append(ori_gt_boxes)
+            pred_bboxes.append(ori_yolo_boxes)
+
+        gt_bboxes = flat_list(gt_bboxes)
+        pred_bboxes = flat_list(pred_bboxes)
+        assert len(gt_bboxes) == len(gt_targets),f' frame_bbox not equal to frame'
+
+        stauc_metrics = STAUCMetrics()
+        stauc_metrics.update(gt_targets,gt_bboxes,pred_scores,pred_bboxes,pred_bboxes_scores)
+        stauc, auc, gap = stauc_metrics.get_stauc()
+
+        now = datetime.now()
+        formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        with open(file_name, 'a') as file:
+            file.write("\n######################### EPOCH #########################\n")
+            # 写入评估指标
+            file.write(f'{formatted_time}')
+            file.write(f'\npost-process is {popr}\n')
+            file.write(f"\n----------------STAUC eval on epoch = {epoch}----------------\n")
+            file.write("[Correctness] total frame = %d\n" % (len(gt_bboxes)))
+            file.write("              ST-AUC = %.5f\n" % (stauc))
+            file.write("              AUC = %.5f\n" % (auc))
+            file.write("              gap = %.5f\n" % (gap))
+            file.write("\n")            
+        print(f'{stauc=:.2f} {auc=:.2f} {gap=:.2f}')
+        custom_print(f'write to {file_name}')
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Script for STAUC evaluation.")
+
+    parser.add_argument(
+        '--model_folder',
+        type=str,
+        required=True,
+        help='Path to the model folder.'
+    )
+    
+    parser.add_argument(
+        '--specific_epoch',
+        type=str,
+        required=True,
+        help='List of specific epochs to process.'
+    )
+    
+    parser.add_argument(
+        '--popr',
+        action='store_true',
+        help='Flag to enable or disable the popr option (default: False).'
+    )
+    
+    args = parser.parse_args()
+    args.specific_epoch = [int(epoch) for epoch in args.specific_epoch.split(',')]
+    return args
+
+if __name__ == "__main__":
+    args = parse_args()
+    calculate_stauc_score(args.model_folder, args.specific_epoch, args.popr)
+
+if __name__ == '__main__2':
     # 创建一个简单的STAUCMetrics对象
     stauc_metrics = STAUCMetrics()
     num_frames = 10

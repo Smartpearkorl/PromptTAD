@@ -15,7 +15,6 @@ cfg.basic.trans.hid_dim = IL(lambda c: c.basic.hid_dim, priority=0, rel=False)
 cfg.basic.trans.nhead = 8
 cfg.basic.trans.ffn_dim = 256
 cfg.basic.trans.dropout = 0.1
-cfg.basic.selected_ano_decoder = 'memory' # 'rnn' or 'memory' or 'plain'
 
 # video swin transformer
 cfg.vst.type = 'swin_base_patch244_window1677_sthv2'
@@ -24,32 +23,8 @@ cfg.vst.checkpoint = str(vst_pretrained_weight_path)
 # fpn 
 cfg.fpn.dimen_reduce_type = 'mlp'
 
-cfg.basic.use_ins = True
+cfg.basic.use_ins = False
 cfg.basic.selected_ano_decoder = 'memory' # 'rnn' or 'memory' or 'plain'
-
-cfg.proxy_task.task_names = []
-cfg.proxy_task.use_ins_anomaly = True
-if cfg.proxy_task.use_ins_anomaly:
-    cfg.proxy_task.task_names.append('instance')
-    cfg.proxy_task.ins_anomaly_type = 'memory' # 'ffn' or 'memoery'
-    if cfg.proxy_task.ins_anomaly_type == 'ffn':
-        cfg.proxy_task.ins_anomaly_ffn.input_dim = IL(lambda c: c.basic.hid_dim)
-        cfg.proxy_task.ins_anomaly_ffn.hidden_dim = IL(lambda c: c.basic.hid_dim)
-        cfg.proxy_task.ins_anomaly_ffn.output_dim = 2
-        cfg.proxy_task.ins_anomaly_ffn.num_layers = 2
-
-    elif cfg.proxy_task.ins_anomaly_type == 'memory': 
-        cfg.proxy_task.regressor.N_for_cls = True  # instance anomaly detection : N dimension for classification
-        cfg.proxy_task.regressor.Qformer_depth = 2  
-        cfg.proxy_task.regressor.Qformer_cfg = cfg.basic.trans
-        cfg.proxy_task.regressor.Qformer_cfg.Skip_selfattn = IL(lambda c: c.proxy_task.regressor.N_for_cls) 
-        cfg.proxy_task.regressor.Qformer_cfg.apply_vis_mb = True
-        cfg.proxy_task.regressor.Qformer_cfg.apply_obj_mb = True
-        cfg.proxy_task.regressor.Qformer_cfg.memory_bank_length = IL(lambda c: c.ano_decoder.memory_bank_length)
-        cfg.proxy_task.regressor.hidden_size = IL(lambda c: c.basic.hid_dim )                                                      
-        cfg.proxy_task.regressor.dim_latent = IL(lambda c: c.basic.hid_dim)
-        cfg.proxy_task.regressor.dropout = IL(lambda c: c.basic.dropout)
-
 
 if cfg.basic.use_ins:
     # instace encoder : prompt encoder
@@ -112,11 +87,12 @@ elif cfg.basic.selected_ano_decoder == 'memory':
     cfg.ano_decoder.apply_vis_mb = True
     cfg.ano_decoder.apply_obj_mb = True
     cfg.ano_decoder.memory_bank_length = 5 
-    cfg.ano_decoder.num_query_token = 1
+    cfg.ano_decoder.num_query_token = 12
     cfg.ano_decoder.initializer_range =0.02
     cfg.ano_decoder.hid_dim = IL(lambda c: c.basic.hid_dim, priority=0)
     cfg.ano_decoder.visual_pe.peroid = IL(lambda c: c.ano_decoder.memory_bank_length)
     cfg.ano_decoder.visual_pe.emb_dim = IL(lambda c: c.basic.hid_dim)
+    cfg.ano_decoder.pool_shape = (6,6)
     cfg.ano_decoder.regressor.Qformer_depth = 2
     cfg.ano_decoder.regressor.Qformer_cfg = cfg.basic.trans
     cfg.ano_decoder.regressor.Qformer_cfg.apply_vis_mb = IL(lambda c: c.ano_decoder.apply_vis_mb)
@@ -125,5 +101,4 @@ elif cfg.basic.selected_ano_decoder == 'memory':
     cfg.ano_decoder.regressor.hidden_size = IL(lambda c: c.ano_decoder.num_query_token*c.ano_decoder.hid_dim )                                                      
     cfg.ano_decoder.regressor.dim_latent = IL(lambda c: c.basic.hid_dim)
     cfg.ano_decoder.regressor.dropout = IL(lambda c: c.basic.dropout)
-
 

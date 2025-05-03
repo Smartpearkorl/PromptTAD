@@ -58,7 +58,7 @@ cfg.dataset.VCL = None
 cfg.dataset.vertical_flip_prob = 0.0
 cfg.dataset.horizontal_flip_prob = 0.0
 cfg.dataset.sorted_num_frames = True
-cfg.dataset.data_type = 'tiny_' # 'select_train_' 'sub_'
+cfg.dataset.data_type = '' # 'select_train_' 'sub_'
 
 # prepare test dataset
 # cfg.test_dataset.data = cfg.dataset.type(**cfg.dataset)

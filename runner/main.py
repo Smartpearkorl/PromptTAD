@@ -60,9 +60,8 @@ def parse_config():
                         default='no_config')
                         
     parser.add_argument('--output',
-                        # default = "/data/qh/DoTA/pama/test/vscode_debug/",
-                        # default = "/data/qh/DoTA/VS/",
-                        default = "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/",
+                        default = "/data/qh/DoTA/pama/test/vscode_debug/",
+                        # default = "/data/qh/DoTA/poma_v2/rnn/vst,base,dim=1024,fpn(0),prompt(0),rnn,vcl=8/",
                         help='Directory where save the output.')
     
     args = parser.parse_args()
@@ -85,15 +84,20 @@ if __name__ == "__main__":
         cfg_path = './configs/train/poma/vst/base_detection/vst,base,fpn(0),prompt(1),rnn,vcl=8.py'
         cfg_path = './configs/train/poma/vst/base_detection/vst,base,fpn(1),prompt(0),rnn,vcl=8.py'
         cfg_path = './configs/train/poma/vst/base_detection/vst,base,fpn(1),prompt(1),rnn,vcl=8.py'
-                                           instance_detection
+
+                                         instance_detection
         cfg_path =  './configs/train/poma/vst/instance_detection/vst,ins,fpn(0),prompt(1),rnn,vcl=8.py'
         cfg_path =  './configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py'
+
                                            ablation_study
         cfg_path = './configs/train/poma/vst/ablation/vst,base,fpn(1),prompt(no_RA),rnn,vcl=8.py'
         cfg_path = './configs/train/poma/vst/ablation/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8.py'
 
+                                            memorey bank
+        cfg_path = './configs/train/poma/vst/memory/vst,ins,fpn(1),prompt(1),memory(2),qdepth(2),mb(10),vcl(20).py'    
+                     
         '''        
-        cfg_path = './configs/train/poma/vst/ablation/vst,ins,fpn(1),prompt(no_RA),rnn,vcl=8.py'
+        cfg_path = './configs/train/poma/vst/memory/vst,ins,fpn(1),prompt(1),memory(2),qdepth(2),mb(10),vcl(20).py'  
     else:
         cfg_path = parse_cfg['config']
 

@@ -15,7 +15,6 @@ cfg.basic.trans.hid_dim = IL(lambda c: c.basic.hid_dim, priority=0, rel=False)
 cfg.basic.trans.nhead = 8
 cfg.basic.trans.ffn_dim = 256
 cfg.basic.trans.dropout = 0.1
-cfg.basic.selected_ano_decoder = 'memory' # 'rnn' or 'memory' or 'plain'
 
 # video swin transformer
 cfg.vst.type = 'swin_base_patch244_window1677_sthv2'
@@ -24,7 +23,7 @@ cfg.vst.checkpoint = str(vst_pretrained_weight_path)
 # fpn 
 cfg.fpn.dimen_reduce_type = 'mlp'
 
-cfg.basic.use_ins = False
+cfg.basic.use_ins = True
 cfg.basic.selected_ano_decoder = 'memory' # 'rnn' or 'memory' or 'plain'
 
 if cfg.basic.use_ins:
@@ -88,12 +87,11 @@ elif cfg.basic.selected_ano_decoder == 'memory':
     cfg.ano_decoder.apply_vis_mb = True
     cfg.ano_decoder.apply_obj_mb = True
     cfg.ano_decoder.memory_bank_length = 5 
-    cfg.ano_decoder.num_query_token = 12
+    cfg.ano_decoder.num_query_token = 1
     cfg.ano_decoder.initializer_range =0.02
     cfg.ano_decoder.hid_dim = IL(lambda c: c.basic.hid_dim, priority=0)
     cfg.ano_decoder.visual_pe.peroid = IL(lambda c: c.ano_decoder.memory_bank_length)
     cfg.ano_decoder.visual_pe.emb_dim = IL(lambda c: c.basic.hid_dim)
-    cfg.ano_decoder.pool_shape = (6,6)
     cfg.ano_decoder.regressor.Qformer_depth = 2
     cfg.ano_decoder.regressor.Qformer_cfg = cfg.basic.trans
     cfg.ano_decoder.regressor.Qformer_cfg.apply_vis_mb = IL(lambda c: c.ano_decoder.apply_vis_mb)
@@ -102,4 +100,5 @@ elif cfg.basic.selected_ano_decoder == 'memory':
     cfg.ano_decoder.regressor.hidden_size = IL(lambda c: c.ano_decoder.num_query_token*c.ano_decoder.hid_dim )                                                      
     cfg.ano_decoder.regressor.dim_latent = IL(lambda c: c.basic.hid_dim)
     cfg.ano_decoder.regressor.dropout = IL(lambda c: c.basic.dropout)
+
 

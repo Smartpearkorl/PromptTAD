@@ -161,7 +161,7 @@ def run(
         dnn=False,  # use OpenCV DNN for ONNX inference
         vid_stride=1,  # video frame-rate stride
 ):
-    dataset_type = 'DADA' # 'DADA' 
+    dataset_type = 'DADA' # 'DoTA' 'DADA' 
     data_type = 'val' # 'train' 'val' 'test'
     source = str(source)
     vis_sample_per = 5 

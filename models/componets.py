@@ -368,7 +368,11 @@ class Memoery_regressor(nn.Module):
         self.cls = nn.Sequential( nn.Linear(hidden_size, dim_latent),
                                   nn.ReLU(),
                                   nn.Dropout(dropout),
-                                  nn.Linear(dim_latent, 2))
+                                  nn.Linear(dim_latent, 64),
+                                  nn.Dropout(dropout),
+                                  nn.Linear(64, 2),
+                                )
+
         self.N_for_cls = N_for_cls
 
     def forward(self, query: Tensor ,img_emb: Tensor , obj_emb: Tensor , frame_state ):   
