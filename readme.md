@@ -18,8 +18,9 @@ Ego-centric Traffic Anomaly Detection (TAD) aims to identify abnormal events in 
 ```bash
 git clone https://github.com/Smartpearkorl/PromptTAD.git
 cd PromptTAD
-conda env create -n poma --file environment.yml
+conda create -n pama python=3.11.9 
 conda activate poma
+pip install -r requirements.txt
 ```
 ### 2. Pathes determination
 File ***PromptTAD/runner/__init__.py*** determines the shared parameters, such as the <a id="DataPath"></a>path of the dataset, the path of the font, etc.
@@ -80,7 +81,7 @@ Convert videos to images on DADA dataset using the following command:
 python runner/src/dada_prepare.py
 ```
 
-To unify the format in DoTA and DADA, [the downloaded dataset files](#GoogleDrive) need to be extracted to their respective locations to achieve the following structure:
+To unify the format in DoTA and DADA, [the downloaded dataset files](https://drive.google.com/drive/folders/1ClJZj7a-aYrAaaOAH9C1yQ4zvx7vEtzC?usp=sharing) need to be extracted to their respective locations to achieve the following structure:
 ```
 DoTA_FOLDER                             DADA_FOLDER  
 ├── annotations                         ├── annotations  
@@ -203,7 +204,7 @@ DADA_FOLDER
 ## Usage
 
 ### Checkpoints 
-[The Checkpoints file](#GoogleDrive) contains the pretrained models and results for the DoTA and DADA datasets. The folder ***vst,ins,fpn(1),prompt(1),rnn,vcl=8*** includes the full model trained and evaluated on the DoTA dataset, while the folder ***Test On DADA*** contains the evaluation results for the DADA dataset.
+[The Checkpoints file](https://drive.google.com/drive/folders/1ClJZj7a-aYrAaaOAH9C1yQ4zvx7vEtzC?usp=sharing) contains the pretrained models and results for the DoTA and DADA datasets. The folder ***vst,ins,fpn(1),prompt(1),rnn,vcl=8*** includes the full model trained and evaluated on the DoTA dataset, while the folder ***Test On DADA*** contains the evaluation results for the DADA dataset.
 ```
 Checkpoints
 ├── vst,ins,fpn(1),prompt(1),rnn,vcl=8  
@@ -224,23 +225,24 @@ Checkpoints
 ### Train
 ```bash
 # single GPU
-python runner/main.py --fp16  --config configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py --output outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/ --phase train --epoch -1
+CUDA_VISIBLE_DEVICES=0 python runner/main.py --fp16  --config "configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py" --output "outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/" --phase train --epoch -1
 # DDP
-python -m torch.distributed.launch --nproc_per_node=2  runner/main.py --distributed --fp16  --config configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py --output outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/ --phase train --epoch -1
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2  runner/main.py --distributed --fp16  --config "configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py" --output "outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/" --phase train --epoch -1
 
 ```
 
 ### Eval
 ```bash
 # single GPU
-python runner/main.py --fp16  --config configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py --output outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/ --phase test --epoch 120
+CUDA_VISIBLE_DEVICES=0 python runner/main.py --fp16  --config "configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py" --output "outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/" --phase test --epoch 120
 # DDP
-python -m torch.distributed.launch --nproc_per_node=2  runner/main.py --distributed --fp16  --config configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py --output outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/ --phase test --epoch 120
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2  runner/main.py --distributed --fp16  --config "configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py" --output  --phase test --epoch 120
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2  runner/main.py --distributed --fp16  --config "configs/train/poma/vst/instance_detection/vst,ins,fpn(1),prompt(1),rnn,vcl=8.py" --output "" --phase test --epoch 120
 ```
 
 ### STAUC Metrics
 ```bash
-python runner/src/stauc.py --model_folder outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/ --specific_epoch 120 --popr
+python runner/src/stauc.py --model_folder "outputs/vst,ins,fpn(1),prompt(1),rnn,vcl=8/" --specific_epoch 120 --popr
 ```
 
 ## Results

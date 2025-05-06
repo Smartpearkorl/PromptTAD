@@ -153,7 +153,7 @@ def resume_from_checkpoint(cfg , model , optimizer , lr_scheduler):
             print('no checkpoint found')
 
             if cfg.epoch != -1:
-                raise Exception('epoch={cfg.epoch} but not find checkpoint')
+                raise Exception(f'epoch={cfg.epoch} but not find checkpoint')
             else:
                 print(f'epoch set to 0')
                 cfg.epoch  = 0  # launch first epoch 
