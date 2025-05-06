@@ -271,7 +271,7 @@ python runner/src/stauc.py --model_folder "outputs/vst,ins,fpn(1),prompt(1),rnn,
 This repo is released under the  Apache License.
 
 ## Acknowledgement
-We would like to express our gratitude to the authors of [movad](https://github.com/linyq2117/CLIP-ES), [CoOp](https://github.com/KaiyangZhou/CoOp), [yolov9](https://github.com/WongKinYiu/yolov9), [Segment-Anything](https://github.com/facebookresearch/segment-anything.git), and [DoTA](https://github.com/MoonBlvd/Detection-of-Traffic-Anomaly) for their outstanding contributions and inspiring works.
+We would like to express our gratitude to the authors of [movad](https://github.com/linyq2117/CLIP-ES), [detr](https://github.com/facebookresearch/detr), [yolov9](https://github.com/WongKinYiu/yolov9), [Segment-Anything](https://github.com/facebookresearch/segment-anything.git), and [DoTA](https://github.com/MoonBlvd/Detection-of-Traffic-Anomaly) for their outstanding contributions and inspiring works.
 
 Pay the highest attribute to [AlchemyCat](https://github.com/HAL-42/AlchemyCat), a powerful and user-friendly deep learning toolkit.
 
