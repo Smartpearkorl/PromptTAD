@@ -2,7 +2,9 @@
 
 We propose **PromptTAD**, a brand new architecture for both frame-level and instance-level video anomaly detection. The code is developed based on the Pytorch framework.
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/memory-augmented-online-video-anomaly/online-video-anomaly-detection-on-detection)](https://paperswithcode.com/sota/online-video-anomaly-detection-on-detection?p=memory-augmented-online-video-anomaly)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/prompttad-object-prompt-enhanced-traffic/online-video-anomaly-detection-on-detection)](https://paperswithcode.com/sota/online-video-anomaly-detection-on-detection?p=prompttad-object-prompt-enhanced-traffic)
+
+
 
 <!-- ![Video Anomaly Detection with PromptTAD](images/demo.gif) -->
 
